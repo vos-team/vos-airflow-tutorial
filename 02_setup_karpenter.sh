@@ -10,12 +10,12 @@ echo $KARPENTER_VERSION $CLUSTER_NAME $AWS_DEFAULT_REGION $AWS_ACCOUNT_ID
 
 TEMPOUT=$(mktemp)
 
-curl -fsSL https://karpenter.sh/"${KARPENTER_VERSION}"/getting-started/getting-started-with-eksctl/cloudformation.yaml  > $TEMPOUT \
+curl -fsSL https://karpenter.sh/docs/getting-started/getting-started-with-eksctl/cloudformation.yaml  > $TEMPOUT \
 && aws cloudformation deploy \
-  --stack-name "Karpenter-${CLUSTER_NAME}" \
-  --template-file "${TEMPOUT}" \
-  --capabilities CAPABILITY_NAMED_IAM \
-  --parameter-overrides "ClusterName=${CLUSTER_NAME}"
+--stack-name "Karpenter-${CLUSTER_NAME}" \
+--template-file "${TEMPOUT}" \
+--capabilities CAPABILITY_NAMED_IAM \
+--parameter-overrides "ClusterName=${CLUSTER_NAME}"
 
 aws iam attach-role-policy --role-name "KarpenterNodeRole-${CLUSTER_NAME}" \
   --policy-arn arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy

@@ -18,7 +18,7 @@ DB_PRIVATE_CIDR2="$(echo $VPC_CIDR | cut -d"." -f1-2).202.0/24"
 
 eksctl create cluster --name ${CLUSTER_NAME} \
   --region ${AWS_REGION}  --with-oidc \
-  --version 1.23 --node-type t2.xlarge \
+  --version 1.23 --node-type t2.large \
   --alb-ingress-access --node-private-networking \
   --nodegroup-name ${NODEGROUP_NAME} --vpc-cidr ${VPC_CIDR} \
   --vpc-nat-mode HighlyAvailable

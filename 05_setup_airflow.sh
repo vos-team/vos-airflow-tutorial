@@ -76,18 +76,24 @@ kubectl create secret generic webserver-secret \
 helm repo add apache-airflow https://airflow.apache.org
 helm repo add kedacore https://kedacore.github.io/charts
 
+# helm install keda kedacore/keda \
+#   --namespace keda \
+#   --create-namespace \
+#   --version "v2.0.0" \
+#   --set image.keda.repository=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/kedacore/keda \
+#   --set image.keda.tag=v2.0.0-arm \
+#   --set image.metricsApiServer.repository=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/kedacore/keda-metrics-apiserver \
+#   --set image.metricsApiServer.tag=v2.0.0-arm64 --timeout 1m0s
+
 helm install keda kedacore/keda \
   --namespace keda \
   --create-namespace \
-  --version "v2.0.0" \
-  --set image.keda.repository=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/kedacore/keda \
-  --set image.keda.tag=v2.0.0-arm \
-  --set image.metricsApiServer.repository=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/kedacore/keda-metrics-apiserver \
-  --set image.metricsApiServer.tag=v2.0.0-arm64 --timeout 1m0s
+  --version "v2.0.0"
 
-cat resources/values.yaml.tpl | envsubst \
+cat resources/values.yaml | envsubst \
   | helm upgrade --install airflow apache-airflow/airflow \
-    --version "1.6.0" --namespace airflow -f -
+    --version "1.6.0" --namespace airflow --create-namespace --debug -f -
+
 
 aws iam create-policy --policy-name AirflowConnectionPolicy-${CLUSTER_NAME} \
   --policy-document file://resources/airflow-iam-policy-example.json
